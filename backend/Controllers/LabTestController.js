@@ -43,6 +43,7 @@ const getLabTestById = async (req, res) => {
 // Create new lab test
 const createLabTest = async (req, res) => {
   try {
+    // Validate request
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -52,9 +53,23 @@ const createLabTest = async (req, res) => {
       })
     }
 
-    const labTest = new LabTest(req.body)
+    // Create new lab test with only allowed fields
+    const labTestData = {
+      patient: req.body.patient,
+      testName: req.body.testName,
+      testType: req.body.testType,
+      description: req.body.description,
+      results: req.body.results,
+      normalRange: req.body.normalRange,
+      status: req.body.status || "Pending",
+      notes: req.body.notes,
+      conductedBy: req.body.conductedBy,
+    }
+
+    const labTest = new LabTest(labTestData)
     await labTest.save()
 
+    // Populate patient information
     await labTest.populate("patient", "name patientId")
 
     res.status(201).json({

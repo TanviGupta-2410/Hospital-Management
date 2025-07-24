@@ -5,7 +5,7 @@ const MedicineSchema = new mongoose.Schema(
     medicineId: {
       type: String,
       unique: true,
-      required: true,
+      // required: true,
     },
     name: {
       type: String,

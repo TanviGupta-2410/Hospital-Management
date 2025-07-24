@@ -5,7 +5,7 @@ const LabTestSchema = new mongoose.Schema(
     testId: {
       type: String,
       unique: true,
-      required: true,
+      // required: true,
     },
     patient: {
       type: mongoose.Schema.Types.ObjectId,

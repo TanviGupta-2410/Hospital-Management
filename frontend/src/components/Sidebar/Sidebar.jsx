@@ -35,35 +35,44 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <h2>🏥 HMS</h2>
-        <p>Hospital Management System</p>
+        <div className="logo-container">
+          <div className="logo-icon">🏥</div>
+          <div className="logo-text">
+            <h2>MediCare Plus</h2>
+            <span>Hospital Management</span>
+          </div>
+        </div>
       </div>
 
-      <div className="user-info">
+      <div className="user-profile">
         <div className="user-avatar">{loggedInUser?.charAt(0).toUpperCase()}</div>
         <div className="user-details">
-          <p className="user-name">{loggedInUser}</p>
-          <p className="user-role">{userRole.replace("_", " ").toUpperCase()}</p>
+          <h4 className="user-name">{loggedInUser}</h4>
+          <span className="user-role">{userRole.replace("_", " ")}</span>
         </div>
       </div>
 
       <nav className="sidebar-nav">
-        {filteredMenuItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`nav-item ${location.pathname === item.path ? "active" : ""}`}
-          >
-            <span className="nav-icon">{item.icon}</span>
-            <span className="nav-label">{item.label}</span>
-          </Link>
-        ))}
+        <div className="nav-section">
+          <span className="nav-section-title">Main Menu</span>
+          {filteredMenuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`nav-item ${location.pathname === item.path ? "active" : ""}`}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-label">{item.label}</span>
+              {location.pathname === item.path && <div className="active-indicator"></div>}
+            </Link>
+          ))}
+        </div>
       </nav>
 
       <div className="sidebar-footer">
         <button className="logout-btn" onClick={handleLogout}>
-          <span>🚪</span>
-          Logout
+          <span className="logout-icon">🚪</span>
+          <span>Logout</span>
         </button>
       </div>
     </div>

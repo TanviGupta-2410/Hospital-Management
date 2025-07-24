@@ -110,43 +110,46 @@ const LabTestManagement = () => {
     setLoading(true)
 
     try {
-      const formData = new FormData()
-      Object.keys(testForm).forEach((key) => {
-        if (key === "reportFile" && testForm[key]) {
-          formData.append("reportFile", testForm[key])
-        } else if (key !== "reportFile") {
-          formData.append(key, testForm[key])
-        }
-      })
+      const testData = {
+        patient: testForm.patient,
+        testName: testForm.testName,
+        testType: testForm.testType,
+        description: testForm.description,
+        results: testForm.results,
+        normalRange: testForm.normalRange,
+        status: testForm.status,
+        notes: testForm.notes,
+      }
 
       const token = localStorage.getItem("token")
       const url = editingTest
         ? `http://localhost:8080/api/lab-tests/${editingTest._id}`
         : "http://localhost:8080/api/lab-tests"
 
-      const method = editingTest ? "PUT" : "POST"
-
       const response = await fetch(url, {
-        method,
+        method: editingTest ? "PUT" : "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: formData,
+        body: JSON.stringify(testData),
       })
 
-      if (response.ok) {
-        handleSuccess(editingTest ? "Lab test updated successfully" : "Lab test created successfully")
-        setShowModal(false)
-        setEditingTest(null)
-        resetForm()
-        fetchLabTests()
-      } else {
-        const error = await response.json()
-        handleError(error.message || "Operation failed")
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Operation failed")
       }
+
+      // Remove the unused data assignment
+      await response.json()
+      handleSuccess(editingTest ? "Lab test updated successfully" : "Lab test created successfully")
+      setShowModal(false)
+      setEditingTest(null)
+      resetForm()
+      fetchLabTests()
     } catch (error) {
       console.error("Submit error:", error)
-      handleError("Error saving lab test")
+      handleError(error.message || "Error saving lab test")
     } finally {
       setLoading(false)
     }
@@ -445,12 +448,7 @@ const LabTestManagement = () => {
 
                   <div className="form-group">
                     <label className="form-label">Status</label>
-                    <select
-                      name="status"
-                      className="form-select"
-                      value={testForm.status}
-                      onChange={handleInputChange}
-                    >
+                    <select name="status" className="form-select" value={testForm.status} onChange={handleInputChange}>
                       {testStatuses.map((status) => (
                         <option key={status} value={status}>
                           {status}

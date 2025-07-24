@@ -1,4 +1,4 @@
-
+"use client"
 
 import { useState, useEffect } from "react"
 import Sidebar from "../../components/Sidebar/Sidebar"
@@ -136,6 +136,28 @@ const BillingPayments = () => {
     setLoading(true)
 
     try {
+      // Validate form data
+      if (!billForm.patient) {
+        throw new Error("Please select a patient")
+      }
+
+      if (!billForm.items || billForm.items.length === 0) {
+        throw new Error("Please add at least one item")
+      }
+
+      // Validate items
+      billForm.items.forEach((item, index) => {
+        if (!item.description) {
+          throw new Error(`Item ${index + 1}: Description is required`)
+        }
+        if (!item.quantity || item.quantity < 1) {
+          throw new Error(`Item ${index + 1}: Invalid quantity`)
+        }
+        if (!item.unitPrice || item.unitPrice < 0) {
+          throw new Error(`Item ${index + 1}: Invalid unit price`)
+        }
+      })
+
       const { subtotal, gstAmount, totalAmount } = calculateTotals()
 
       const billData = {
@@ -146,12 +168,16 @@ const BillingPayments = () => {
       }
 
       const token = localStorage.getItem("token")
-      const url = editingBill ? `http://localhost:8080/api/bills/${editingBill._id}` : "http://localhost:8080/api/bills"
+      if (!token) {
+        throw new Error("Authentication token not found")
+      }
 
-      const method = editingBill ? "PUT" : "POST"
+      const url = editingBill 
+        ? `http://localhost:8080/api/bills/${editingBill._id}` 
+        : "http://localhost:8080/api/bills"
 
       const response = await fetch(url, {
-        method,
+        method: editingBill ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -159,19 +185,20 @@ const BillingPayments = () => {
         body: JSON.stringify(billData),
       })
 
-      if (response.ok) {
-        handleSuccess(editingBill ? "Bill updated successfully" : "Bill created successfully")
-        setShowModal(false)
-        setEditingBill(null)
-        resetForm()
-        fetchBills()
-      } else {
-        const error = await response.json()
-        handleError(error.message || "Operation failed")
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || "Operation failed")
       }
+
+      handleSuccess(editingBill ? "Bill updated successfully" : "Bill created successfully")
+      setShowModal(false)
+      setEditingBill(null)
+      resetForm()
+      fetchBills()
     } catch (error) {
       console.error("Submit error:", error)
-      handleError("Error saving bill")
+      handleError(error.message || "Error saving bill. Please check your connection and try again.")
     } finally {
       setLoading(false)
     }

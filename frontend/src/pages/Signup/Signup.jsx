@@ -15,6 +15,7 @@ function Signup() {
     password: "",
     role: "receptionist",
   })
+  const [agreeTerms, setAgreeTerms] = useState(false)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
@@ -34,6 +35,10 @@ function Signup() {
       return handleError("Name, email and password are required")
     }
 
+    if (!agreeTerms) {
+      return handleError("You must agree to the Terms of Service")
+    }
+
     setLoading(true)
 
     try {
@@ -45,9 +50,8 @@ function Signup() {
         },
         body: JSON.stringify(signupInfo),
       })
-      console.log(response);
+      
       const result = await response.json()
-      console.log("Signup response:", result)
       const { success, message, error } = result
 
       if (success) {
@@ -73,91 +77,114 @@ function Signup() {
   return (
     <div className="signup-container">
       <div className="signup-card">
-        <div className="signup-header">
-          <h1>🏥 Hospital Management System</h1>
-          <h2>Create Account</h2>
-          <p>Join our hospital management system</p>
+        <div className="signup-right">
+          <div className="signup-form-wrapper">
+            <div className="signup-header">
+              <h2>Create Account</h2>
+              <p>Join our hospital management system</p>
+            </div>
+            
+            <form onSubmit={handleSignup} className="signup-form">
+              <div className="form-group">
+                <label htmlFor="name">Full Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={signupInfo.name}
+                  onChange={handleChange}
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={signupInfo.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={signupInfo.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="role">Role</label>
+                <select
+                  id="role"
+                  name="role"
+                  value={signupInfo.role}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="receptionist">Receptionist</option>
+                  <option value="doctor">Doctor</option>
+                  <option value="lab_staff">Lab Staff</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              
+              <div className="terms-agreement">
+                <label className="checkbox-container">
+                  <input 
+                    type="checkbox" 
+                    checked={agreeTerms}
+                    onChange={() => setAgreeTerms(!agreeTerms)}
+                    required
+                  />
+                  <span className="checkmark"></span>
+                  I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                </label>
+              </div>
+              
+              <button type="submit" className="create-account-btn">
+                Create Account
+              </button>
+              
+              <div className="signup-footer">
+                <p>Already have an account? <Link to="/login">Sign In</Link></p>
+              </div>
+            </form>
+          </div>
         </div>
-
-        <form onSubmit={handleSignup} className="signup-form">
-          <div className="form-group">
-            <label htmlFor="name" className="form-label">
-              Full Name
-            </label>
-            <input
-              onChange={handleChange}
-              type="text"
-              name="name"
-              id="name"
-              className="form-input"
-              placeholder="Enter your full name"
-              value={signupInfo.name}
-              required
-            />
+        
+        <div className="signup-left">
+          <div className="signup-left-content">
+            <h1>MediCare Plus</h1>
+            <p>Advanced Hospital Management System</p>
+            
+            <div className="features">
+              <div className="feature">
+                <div className="feature-icon">✓</div>
+                <div className="feature-text">Patient Management</div>
+              </div>
+              <div className="feature">
+                <div className="feature-icon">✓</div>
+                <div className="feature-text">Appointment Scheduling</div>
+              </div>
+              <div className="feature">
+                <div className="feature-icon">✓</div>
+                <div className="feature-text">Billing & Payments</div>
+              </div>
+            </div>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">
-              Email Address
-            </label>
-            <input
-              onChange={handleChange}
-              type="email"
-              name="email"
-              id="email"
-              className="form-input"
-              placeholder="Enter your email"
-              value={signupInfo.email}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
-              onChange={handleChange}
-              type="password"
-              name="password"
-              id="password"
-              className="form-input"
-              placeholder="Enter your password"
-              value={signupInfo.password}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="role" className="form-label">
-              Role
-            </label>
-            <select
-              onChange={handleChange}
-              name="role"
-              id="role"
-              className="form-select"
-              value={signupInfo.role}
-              required
-            >
-              <option value="receptionist">Receptionist</option>
-              <option value="doctor">Doctor</option>
-              <option value="lab_staff">Lab Staff</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          <button type="submit" className="btn btn-primary signup-btn">
-            Create Account
-          </button>
-
-          <div className="signup-footer">
-            <span>Already have an account? </span>
-            <Link to="/login" className="login-link">
-              Sign In
-            </Link>
-          </div>
-        </form>
+        </div>
       </div>
       <ToastContainer />
     </div>

@@ -13,6 +13,7 @@ function Login() {
     email: "",
     password: "",
   })
+  const [rememberMe, setRememberMe] = useState(false)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
@@ -73,56 +74,73 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <div className="login-header">
-          <h1>🏥 Hospital Management System</h1>
-          <h2>Welcome Back</h2>
-          <p>Please sign in to your account</p>
+        <div className="login-left">
+          <div className="login-left-content">
+            <h1>MediCare Plus</h1>
+            <p>Advanced Hospital Management System</p>
+          </div>
         </div>
-
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">
-              Email Address
-            </label>
-            <input
-              onChange={handleChange}
-              type="email"
-              name="email"
-              id="email"
-              className="form-input"
-              placeholder="Enter your email"
-              value={loginInfo.email}
-              required
-            />
+        <div className="login-right">
+          <div className="login-form-wrapper">
+            <div className="login-header">
+              <h2>Welcome Back</h2>
+              <p>Please sign in to your account to continue</p>
+            </div>
+            
+            <form onSubmit={handleLogin} className="login-form">
+              <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={loginInfo.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <div className="password-header">
+                  <label htmlFor="password">Password</label>
+                  <Link to="/forgot-password" className="forgot-link">
+                    Forgot Password?
+                  </Link>
+                </div>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={loginInfo.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+              
+              <div className="remember-me">
+                <label className="checkbox-container">
+                  <input 
+                    type="checkbox" 
+                    checked={rememberMe}
+                    onChange={() => setRememberMe(!rememberMe)}
+                  />
+                  <span className="checkmark"></span>
+                  Remember me
+                </label>
+              </div>
+              
+              <button type="submit" className="sign-in-btn">
+                Sign In
+              </button>
+              
+              <div className="login-footer">
+                <p>Don't have an account? <Link to="/signup">Create Account</Link></p>
+              </div>
+            </form>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
-              onChange={handleChange}
-              type="password"
-              name="password"
-              id="password"
-              className="form-input"
-              placeholder="Enter your password"
-              value={loginInfo.password}
-              required
-            />
-          </div>
-
-          <button type="submit" className="btn btn-primary login-btn">
-            Sign In
-          </button>
-
-          <div className="login-footer">
-            <span>Don't have an account? </span>
-            <Link to="/signup" className="signup-link">
-              Sign Up
-            </Link>
-          </div>
-        </form>
+        </div>
       </div>
       <ToastContainer />
     </div>

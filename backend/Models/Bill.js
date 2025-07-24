@@ -5,7 +5,7 @@ const BillSchema = new mongoose.Schema(
     billId: {
       type: String,
       unique: true,
-      required: true,
+      // required: true,
     },
     patient: {
       type: mongoose.Schema.Types.ObjectId,
