@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import Sidebar from "../../components/Sidebar/Sidebar"
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner"
@@ -28,14 +28,8 @@ const MedicalHistory = () => {
     attachments: [],
   })
 
-  useEffect(() => {
-    if (patientId) {
-      fetchPatient()
-      fetchMedicalHistory()
-    }
-  }, [patientId])
-
-  const fetchPatient = async () => {
+  // Move these functions before useEffect
+  const fetchPatient = useCallback(async () => {
     setLoading(true)
     try {
       const token = localStorage.getItem("token")
@@ -57,9 +51,9 @@ const MedicalHistory = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [patientId])
 
-  const fetchMedicalHistory = async () => {
+  const fetchMedicalHistory = useCallback(async () => {
     setLoading(true)
     try {
       const token = localStorage.getItem("token")
@@ -81,7 +75,15 @@ const MedicalHistory = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [patientId])
+
+  // Now use the functions in useEffect
+  useEffect(() => {
+    if (patientId) {
+      fetchPatient()
+      fetchMedicalHistory()
+    }
+  }, [patientId, fetchPatient, fetchMedicalHistory])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target

@@ -29,7 +29,7 @@ function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault()
-    const { name, email, password, role } = signupInfo
+    const { name, email, password } = signupInfo // removed role since it's not used
 
     if (!name || !email || !password) {
       return handleError("Name, email and password are required")
@@ -149,7 +149,7 @@ function Signup() {
                     required
                   />
                   <span className="checkmark"></span>
-                  I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                  I agree to the <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link>
                 </label>
               </div>
               
